@@ -1,4 +1,6 @@
 import User from "../model/userModel.js";
+import bcrypt from "bcryptjs";
+import getJWTtokenandSetCookie from "../utils/helper/getJWTtokenandSetCookie.js";
 
 const signupUser = async (req,res) => {
     try {
@@ -30,6 +32,7 @@ const signupUser = async (req,res) => {
         await newUser.save();
 
         if(newUser) {
+            getJWTtokenandSetCookie(newUser._id,res);
             res.status(201).json({
                 _id: newUser._id,
                 name: newUser.name,
@@ -42,10 +45,63 @@ const signupUser = async (req,res) => {
 
     } catch (error) {
         
-        res.status(500).json({message: "Interna server error."});
+        res.status(500).json({message: "Internal server error."});
         console.error("Error in creating the new User -> ",error.message);
 
     }
 }
 
-export { signupUser };
+const login = async (req,res) => {
+    try {
+
+        const {username,password} = req.body;
+
+        if(!(username || password)) {
+            res.status(400).json({message: "All details are required."});
+        }
+
+        const user = await User.findOne({username});
+
+        if(!user) {
+            res.status(404).json({message: "User is not exist."});
+        }
+
+        const isPasswordCorrect = await bcrypt.compare(password,user.password);
+
+        if(!isPasswordCorrect) {
+            return res.status(400).json({message: "Username or Password is Incorrect."});
+        }
+
+        getJWTtokenandSetCookie(user._id,res);
+
+        res.status(200).json({
+            _id: user._id,
+            name: user.name,
+            username: user.username,
+            email: user.email
+        })
+        
+    } catch (error) {
+
+        res.status(500).json({message: "Internal server error."});
+        console.error("Error in logging the User -> ",error.message);
+        
+    }
+} 
+
+const logout = async (req,res) => {
+    try {
+
+        res.cookie("jwt"," ",{maxAge: "1"});
+
+        res.status(200).json({message: "User logged Out Successfully."});
+        
+    } catch (error) {
+
+        res.status(500).json({message: "Internal server error."});
+        console.error("Error in logging out the User -> ",error.message);
+        
+    }
+}
+
+export { signupUser, login, logout };
