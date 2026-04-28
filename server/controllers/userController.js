@@ -113,7 +113,7 @@ const followUnfollowUser = async (req,res) => {
 
         const currentUser = await User.findById(req.user._id);
 
-        if(id == req.user._id) {
+        if(id == req.user._id.toString()) {
             return res.status(400).json({message: "You cannot follow/unfollow yourself."});
         }
  
@@ -147,4 +147,66 @@ const followUnfollowUser = async (req,res) => {
     }
 }
 
-export { signupUser, login, logout, followUnfollowUser };
+const updateprofile = async (req,res) => {
+    
+    try {
+
+        const {name,username,email,password,profilePic,bio} = req.body;
+        const id = req.user._id;
+
+        const user = await User.findById(id);
+
+        if(!user) { 
+            return req.status(404).json({message: "User not found."});
+        }
+
+        if(req.params.id != id.toString()) {
+            return res.status(400).json({message: "You can't change the other's User profile."});
+        }
+
+        if(password) {
+            const salt = await bcrypt.genSalt(10);
+            const hashedpassword = await bcrypt.hash(password,salt);
+            user.password = hashedpassword;
+        }
+
+        user.name = name || user.name;
+		user.email = email || user.email;
+		user.username = username || user.username;
+		user.profilePic = profilePic || user.profilePic;
+		user.bio = bio || user.bio;
+
+        user = await user.save();
+
+        res.status(200).json({message: "Your profile updated successfully.", user });
+        
+    } catch (error) {
+        
+        res.status(500).json({message: "Internal server error."});
+        console.error("Error in Updating the profile of the User -> ",error.message);
+
+    }
+}
+
+const getUserProfile = async (req,res) => {
+    try {
+
+        const { username } = req.params;
+
+        const user = await User.findOne({ username }).select("-password").select("-updatedAt");
+        
+		if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+		res.status(200).json(user);
+        
+    } catch (error) {
+
+        res.status(500).json({message: "Internal server error."});
+        console.error("Error in Getting the profile of the User -> ",error.message);
+        
+    }
+}
+
+export { signupUser, login, logout, followUnfollowUser, updateprofile, getUserProfile };
