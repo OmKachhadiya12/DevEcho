@@ -104,4 +104,47 @@ const logout = async (req,res) => {
     }
 }
 
-export { signupUser, login, logout };
+const followUnfollowUser = async (req,res) => {
+    try {
+
+        const id = req.params.id;
+
+        const modifiedUser = await User.findById(id);
+
+        const currentUser = await User.findById(req.user._id);
+
+        if(id == req.user._id) {
+            return res.status(400).json({message: "You cannot follow/unfollow yourself."});
+        }
+ 
+        if(!currentUser || !modifiedUser) {
+            return res.status(404).json({message: "User not found."});
+        }
+
+        const isFollowing = currentUser.following.includes(id);
+
+        if(isFollowing) {
+
+            await User.findByIdAndUpdate(req.user._id,{$pull: {following: id}});
+            await User.findByIdAndUpdate(id,{$pull: {followers: req.user._id}});
+
+            return res.status(200).json({message: "You Unfollowed successfully."});
+
+        }else {
+
+            await User.findByIdAndUpdate(req.user.id,{$push: {following: id}});
+            await User.findByIdAndUpdate(id,{$push: {followers: req.user._id}});
+
+            return res.status(200).json({message: "You Followed successfully."});
+
+        }
+        
+    } catch (error) {
+        
+        res.status(500).json({message: "Internal server error."});
+        console.error("Error in Following the User -> ",error.message);
+
+    }
+}
+
+export { signupUser, login, logout, followUnfollowUser };
