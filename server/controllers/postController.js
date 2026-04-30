@@ -118,4 +118,65 @@ const likeUnlikePost = async (req,res) => {
     }
 }
 
-export { createPost, getPost, deletePost, likeUnlikePost };
+const replyToPost = async (req,res) => {
+    try {
+
+        const {id: postId} = req.params;
+
+        const {text} = req.body;
+
+        const {_id: userId} = req.user;
+        const username = req.user.username;
+        const profilePic = req.user.profilePic;
+
+        if(!text) {
+            return res.status(400).json({message: "text feild is required."});
+        }
+
+        const post = await Post.findById(postId);
+
+        if(!post) {
+            return res.status(404).json({message: "Post not found."});
+        }
+
+        post.replies.push({userId,username,profilePic,text});
+
+        await post.save();
+
+        res.status(200).json({message: "Replied successfully.",post});
+        
+        
+    } catch (error) {
+
+        res.status(500).json({message: "Internal server error."});
+        console.error("Error in Replying to the Post -> ",error.message);
+        
+    }
+}
+
+const getFeedPost = async (req,res) => {
+    try {
+
+        const {_id: userId} = req.user;
+
+        const user = await User.findById(userId);
+        
+        if(!user) {
+            return res.status(404).json({message: "User not found."});
+        }
+
+        const following = user.following;
+
+        const feedPosts = await Post.find({postedBy: {$in: following}}).sort({createdAt: -1});
+
+        res.status(200).json({feedPosts});
+        
+    } catch (error) {
+
+        res.status(500).json({message: "Internal server error."});
+        console.error("Error in Feeding the Post -> ",error.message);
+        
+    }
+}
+
+export { createPost, getPost, deletePost, likeUnlikePost, replyToPost, getFeedPost };
