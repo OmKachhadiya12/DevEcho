@@ -8,7 +8,7 @@ const signupUser = async (req,res) => {
         const { name,username,email,password } = req.body;
 
         if([name,username,email,password].some((feild) => {feild?.trim() == ""})) {
-            return res.status(400).json({message: "All feilds are required."});
+            return res.status(400).json({error: "All feilds are required."});
         }
 
         const existedUser = await User.findOne({
@@ -16,7 +16,7 @@ const signupUser = async (req,res) => {
         });
 
         if(existedUser) {
-            return res.status(400).json({message: "User already Exists."});
+            return res.status(400).json({error: "User already Exists."});
         }
 
         const salt = await bcrypt.genSalt(10);
@@ -40,12 +40,12 @@ const signupUser = async (req,res) => {
                 email: newUser.email
             })
         } else {
-            res.status(400).json({message: "Invalid User details."})
+            res.status(400).json({error: "Invalid User details."})
         }
 
     } catch (error) {
         
-        res.status(500).json({message: "Internal server error."});
+        res.status(500).json({error: "Internal server error."});
         console.error("Error in creating the new User -> ",error.message);
 
     }
@@ -57,19 +57,19 @@ const login = async (req,res) => {
         const {username,password} = req.body;
 
         if(!(username || password)) {
-            res.status(400).json({message: "All details are required."});
+            res.status(400).json({error: "All details are required."});
         }
 
         const user = await User.findOne({username});
 
         if(!user) {
-            res.status(404).json({message: "User is not exist."});
+            res.status(404).json({error: "User is not exist."});
         }
 
         const isPasswordCorrect = await bcrypt.compare(password,user.password);
 
         if(!isPasswordCorrect) {
-            return res.status(400).json({message: "Username or Password is Incorrect."});
+            return res.status(400).json({error: "Username or Password is Incorrect."});
         }
 
         getJWTtokenandSetCookie(user._id,res);
@@ -83,7 +83,7 @@ const login = async (req,res) => {
         
     } catch (error) {
 
-        res.status(500).json({message: "Internal server error."});
+        res.status(500).json({error: "Internal server error."});
         console.error("Error in logging the User -> ",error.message);
         
     }
@@ -98,7 +98,7 @@ const logout = async (req,res) => {
         
     } catch (error) {
 
-        res.status(500).json({message: "Internal server error."});
+        res.status(500).json({error: "Internal server error."});
         console.error("Error in logging out the User -> ",error.message);
         
     }
@@ -114,11 +114,11 @@ const followUnfollowUser = async (req,res) => {
         const currentUser = await User.findById(req.user._id);
 
         if(id == req.user._id.toString()) {
-            return res.status(400).json({message: "You cannot follow/unfollow yourself."});
+            return res.status(400).json({error: "You cannot follow/unfollow yourself."});
         }
  
         if(!currentUser || !modifiedUser) {
-            return res.status(404).json({message: "User not found."});
+            return res.status(404).json({error: "User not found."});
         }
 
         const isFollowing = currentUser.following.includes(id);
@@ -141,7 +141,7 @@ const followUnfollowUser = async (req,res) => {
         
     } catch (error) {
         
-        res.status(500).json({message: "Internal server error."});
+        res.status(500).json({error: "Internal server error."});
         console.error("Error in Following the User -> ",error.message);
 
     }
@@ -157,11 +157,11 @@ const updateprofile = async (req,res) => {
         const user = await User.findById(id);
 
         if(!user) { 
-            return req.status(404).json({message: "User not found."});
+            return req.status(404).json({error: "User not found."});
         }
 
         if(req.params.id != id.toString()) {
-            return res.status(400).json({message: "You can't change the other's User profile."});
+            return res.status(400).json({error: "You can't change the other's User profile."});
         }
 
         if(password) {
@@ -182,7 +182,7 @@ const updateprofile = async (req,res) => {
         
     } catch (error) {
         
-        res.status(500).json({message: "Internal server error."});
+        res.status(500).json({error: "Internal server error."});
         console.error("Error in Updating the profile of the User -> ",error.message);
 
     }
@@ -196,14 +196,14 @@ const getUserProfile = async (req,res) => {
         const user = await User.findOne({ username }).select("-password").select("-updatedAt");
         
 		if (!user) {
-            return res.status(404).json({ message: "User not found" });
+            return res.status(404).json({ error: "User not found" });
         }
 
 		res.status(200).json(user);
         
     } catch (error) {
 
-        res.status(500).json({message: "Internal server error."});
+        res.status(500).json({error: "Internal server error."});
         console.error("Error in Getting the profile of the User -> ",error.message);
         
     }

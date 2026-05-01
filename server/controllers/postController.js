@@ -7,23 +7,23 @@ const createPost = async (req,res) => {
         const {postedBy,text,img} = req.body;
 
         if(!(postedBy || img)) {
-            return res.status(400).json({message: "All feilds are required."});
+            return res.status(400).json({error: "All feilds are required."});
         }
         
         const user = await User.findById(postedBy);
 
         if(!user) {
-            return res.status(400).json({message: "User not found."});
+            return res.status(400).json({error: "User not found."});
         }
 
         if(user.id.toString() != req.user._id.toString()) {
-            return res.status(401).json({message: "Unauthorized to creates the Post for the another User."})
+            return res.status(401).json({error: "Unauthorized to creates the Post for the another User."})
         }
         
         const maxLength = 500;
         
         if(text.length > maxLength) {
-            return res.status(400).json({message: `Text length should be less then ${maxLength}.`});
+            return res.status(400).json({error: `Text length should be less then ${maxLength}.`});
         }
 
         const newPost = new Post({postedBy,text,img});
@@ -34,7 +34,7 @@ const createPost = async (req,res) => {
         
     } catch (error) {
 
-        res.status(500).json({message: "Internal server error."});
+        res.status(500).json({error: "Internal server error."});
         console.error("Error in Creating the Post of the User -> ",error.message);
         
     }
@@ -46,14 +46,14 @@ const getPost = async (req,res) => {
         const post = await Post.findById(req.params.id);
 
 		if (!post) {
-			return res.status(404).json({ message: "Post not found" });
+			return res.status(404).json({ error: "Post not found" });
 		}
 
 		res.status(200).json({ post });
         
     } catch (error) {
 
-        res.status(500).json({message: "Internal server error."});
+        res.status(500).json({error: "Internal server error."});
         console.error("Error in Getting the Post -> ",error.message);
         
     }
@@ -65,11 +65,11 @@ const deletePost = async (req,res) => {
         const post = await Post.findById(req.params.id);
 
 		if (!post) {
-			return res.status(404).json({ message: "Post not found" });
+			return res.status(404).json({ error: "Post not found" });
 		}
 
         if(post.postedBy.toString() != req.user._id) {
-            return res.status(401).json({message: "Unauthorized to delete the Post."});
+            return res.status(401).json({error: "Unauthorized to delete the Post."});
         }
 
         await Post.findByIdAndDelete(req.params.id);
@@ -78,7 +78,7 @@ const deletePost = async (req,res) => {
         
     } catch (error) {
 
-        res.status(500).json({message: "Internal server error."});
+        res.status(500).json({error: "Internal server error."});
         console.error("Error in Deleting the Post -> ",error.message);
         
     }
@@ -93,7 +93,7 @@ const likeUnlikePost = async (req,res) => {
         const post = await Post.findById(postId);
 
         if(!post) {
-            return res.status(404).json({message: "Post not found."});
+            return res.status(404).json({error: "Post not found."});
         }
 
         const userLikedPost = post.likes.includes(userId);
@@ -112,7 +112,7 @@ const likeUnlikePost = async (req,res) => {
         
     } catch (error) {
 
-        res.status(500).json({message: "Internal server error."});
+        res.status(500).json({error: "Internal server error."});
         console.error("Error in Liking/Unliking the Post -> ",error.message);
         
     }
@@ -130,13 +130,13 @@ const replyToPost = async (req,res) => {
         const profilePic = req.user.profilePic;
 
         if(!text) {
-            return res.status(400).json({message: "text feild is required."});
+            return res.status(400).json({error: "text feild is required."});
         }
 
         const post = await Post.findById(postId);
 
         if(!post) {
-            return res.status(404).json({message: "Post not found."});
+            return res.status(404).json({error: "Post not found."});
         }
 
         post.replies.push({userId,username,profilePic,text});
@@ -148,7 +148,7 @@ const replyToPost = async (req,res) => {
         
     } catch (error) {
 
-        res.status(500).json({message: "Internal server error."});
+        res.status(500).json({error: "Internal server error."});
         console.error("Error in Replying to the Post -> ",error.message);
         
     }
@@ -162,7 +162,7 @@ const getFeedPost = async (req,res) => {
         const user = await User.findById(userId);
         
         if(!user) {
-            return res.status(404).json({message: "User not found."});
+            return res.status(404).json({error: "User not found."});
         }
 
         const following = user.following;
@@ -173,7 +173,7 @@ const getFeedPost = async (req,res) => {
         
     } catch (error) {
 
-        res.status(500).json({message: "Internal server error."});
+        res.status(500).json({error: "Internal server error."});
         console.error("Error in Feeding the Post -> ",error.message);
         
     }
