@@ -7,7 +7,7 @@ const signupUser = async (req,res) => {
 
         const { name,username,email,password } = req.body;
 
-        if([name,username,email,password].some((feild) => {feild?.trim() == ""})) {
+        if([name,username,email,password].some((feild) => feild?.trim() == "")) {
             return res.status(400).json({error: "All feilds are required."});
         }
 
@@ -57,13 +57,13 @@ const login = async (req,res) => {
         const {username,password} = req.body;
 
         if(!(username || password)) {
-            res.status(400).json({error: "All details are required."});
+            return res.status(400).json({error: "All details are required."});
         }
 
         const user = await User.findOne({username});
 
         if(!user) {
-            res.status(404).json({error: "User is not exist."});
+            return res.status(404).json({error: "User is not exist."});
         }
 
         const isPasswordCorrect = await bcrypt.compare(password,user.password);

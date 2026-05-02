@@ -16,14 +16,47 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import authScreenAtom from "../atoms/authAtom";
 import useShowToast from "../hooks/useShowToast";
 import userAtom from "../atoms/userAtom.js";
 
 const LoginCart = () => {
 
+	const [showPassword, setShowPassword] = useState(false);
+
     const setAuthScreen = useSetRecoilState(authScreenAtom);
+	const setUser = useRecoilState(userAtom);
+	const showToast = useShowToast();
+
+	const [inputs, setInputs] = useState({
+		username: "",
+		password: "",
+	});
+
+	const handleLogin = async () => {
+		try {
+
+			const res = await fetch("/api/user/login",{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(inputs), 
+			})
+
+			if (data.error) {
+				showToast("Error", data.error, "error");
+				return;
+			}
+			console.log(data);
+			localStorage.setItem("user-threads", JSON.stringify(data));
+			setUser(data);
+			
+		} catch (error) {
+			showToast("Error",error.message,"error");
+		}
+	}
 
   return (
    <>
