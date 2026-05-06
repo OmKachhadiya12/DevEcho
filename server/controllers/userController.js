@@ -1,6 +1,7 @@
 import User from "../model/userModel.js";
 import bcrypt from "bcryptjs";
 import getJWTtokenandSetCookie from "../utils/helper/getJWTtokenandSetCookie.js";
+import {v2 as cloudinary} from "cloudinary";
 
 const signupUser = async (req,res) => {
     try {
@@ -37,7 +38,9 @@ const signupUser = async (req,res) => {
                 _id: newUser._id,
                 name: newUser.name,
                 username: newUser.username,
-                email: newUser.email
+                email: newUser.email,
+                bio: newUser.bio,
+				profilePic: newUser.profilePic,
             })
         } else {
             res.status(400).json({error: "Invalid User details."})
@@ -78,7 +81,9 @@ const login = async (req,res) => {
             _id: user._id,
             name: user.name,
             username: user.username,
-            email: user.email
+            email: user.email,
+            bio: user.bio,
+			profilePic: user.profilePic,
         })
         
     } catch (error) {
@@ -151,7 +156,8 @@ const updateprofile = async (req,res) => {
     
     try {
 
-        const {name,username,email,password,profilePic,bio} = req.body;
+        const {name,username,email,password,bio} = req.body;
+        let {profilePic} = req.body;
         const id = req.user._id;
 
         const user = await User.findById(id);
@@ -170,6 +176,11 @@ const updateprofile = async (req,res) => {
             user.password = hashedpassword;
         }
 
+        if(profilePic) {
+            const uploadResponse = await cloudinary.uploader.upload(profilePic);
+            profilePic = uploadResponse.secure_url;
+        }
+
         user.name = name || user.name;
 		user.email = email || user.email;
 		user.username = username || user.username;
@@ -177,6 +188,8 @@ const updateprofile = async (req,res) => {
 		user.bio = bio || user.bio;
 
         user = await user.save();
+
+        user.password = null;
 
         res.status(200).json({message: "Your profile updated successfully.", user });
         

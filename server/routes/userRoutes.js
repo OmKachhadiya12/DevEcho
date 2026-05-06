@@ -10,6 +10,6 @@ router.post("/signup",signupUser);
 router.post("/login",login);
 router.post("/logout",logout);
 router.post("/follow/:id",protectRoute,followUnfollowUser);
-router.post("/update/:id",protectRoute,updateprofile);
+router.put("/update/:id",protectRoute,updateprofile);
 
 export default router;
