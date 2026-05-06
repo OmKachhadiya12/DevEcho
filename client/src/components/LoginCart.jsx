@@ -28,6 +28,7 @@ const LoginCart = () => {
     const setAuthScreen = useSetRecoilState(authScreenAtom);
 	const setUser = useRecoilState(userAtom);
 	const showToast = useShowToast();
+	const [loading, setLoading] = useState(false);
 
 	const [inputs, setInputs] = useState({
 		username: "",
@@ -35,6 +36,7 @@ const LoginCart = () => {
 	});
 
 	const handleLogin = async () => {
+		setLoading(true);
 		try {
 
 			const res = await fetch("/api/user/login",{
@@ -55,6 +57,8 @@ const LoginCart = () => {
 			
 		} catch (error) {
 			showToast("Error",error.message,"error");
+		} finally {
+			setLoading(false);
 		}
 	}
 
@@ -114,6 +118,7 @@ const LoginCart = () => {
 									bg: useColorModeValue("gray.700", "gray.800"),
 								}}
 								onClick={handleLogin}
+								isLoading={loading}
 							>
 								Login
 							</Button>
