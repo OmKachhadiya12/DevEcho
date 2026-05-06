@@ -29,6 +29,7 @@ const UpdateProfilePage = () => {
 	});
 
 	const fileRef = useRef(null);
+	const [updating, setUpdating] = useState(false);
 	const showToast = useShowToast();
 
 	const { handleImageChange, imgUrl } = usePreviewImg();
@@ -36,6 +37,9 @@ const UpdateProfilePage = () => {
 	const handleSubmit = async(e) => {
 
 		e.preventDefault();
+
+		if (updating) return;
+		setUpdating(true);
 
 		try {
 			
@@ -61,6 +65,8 @@ const UpdateProfilePage = () => {
 
 			showToast("Error", error, "error");
 			
+		} finally {
+			setUpdating(false);
 		}
 	}
 
@@ -161,6 +167,7 @@ const UpdateProfilePage = () => {
 								bg: "green.500",
 							}}
 							type='submit'
+							isLoading={updating}
 						>
 							Submit
 						</Button>
