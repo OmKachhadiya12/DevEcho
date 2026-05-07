@@ -37,7 +37,7 @@ const SignUpCart = () => {
 	const showToast = useShowToast();
 	const setUser = useRecoilState(userAtom);
 
-    const handleSignup = async (params) => {
+    const handleSignup = async () => {
         try {
 
             const res = await fetch("/api/user/signup",{

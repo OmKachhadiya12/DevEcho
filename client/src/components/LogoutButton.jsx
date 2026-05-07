@@ -1,12 +1,13 @@
 import React from 'react'
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import userAtom from '../atoms/userAtom';
 import useShowToast from '../hooks/useShowToast';
 import { FiLogOut } from "react-icons/fi";
+import { Button } from "@chakra-ui/button";
 
 const LogoutButton = () => {
 
-    const setUser = useRecoilState(userAtom);
+    const setUser = useSetRecoilState(userAtom);
     const showToast = useShowToast();
 
     const handleLogout = async() => {
@@ -26,7 +27,7 @@ const LogoutButton = () => {
                 return;
             }
 
-            localStorage.removeItem("users-threads");
+            localStorage.removeItem("user-threads");
             setUser(null);
             
         } catch (error) {

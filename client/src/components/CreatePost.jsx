@@ -20,7 +20,7 @@ import {
 	useDisclosure,
 } from "@chakra-ui/react";
 import { useRef, useState } from "react";
-import usePreviewImg from "../hooks/usePreviewImg";
+import usePreviewImg from "../hooks/usePreviewImage.js";
 import { BsFillImageFill } from "react-icons/bs";
 import { useRecoilValue } from "recoil";
 import userAtom from "../atoms/userAtom";

@@ -15,7 +15,7 @@ const UserPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(()=> {
-    const getUser = () => {
+    const getUser = async () => {
       try {
         const res = await fetch(`api/user/profile/&{username}`);
         const data = await res.json();

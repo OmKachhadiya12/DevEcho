@@ -4,7 +4,7 @@ import useShowToast from './useShowToast';
 
 const usePreviewImage = () => {
 
-    const [img,setImg ] = useState(null);
+    const [imgUrl,setImg ] = useState(null);
     const showToast = useShowToast();
 
     const handleImageChange = () => {

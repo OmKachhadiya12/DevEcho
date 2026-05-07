@@ -26,7 +26,7 @@ const LoginCart = () => {
 	const [showPassword, setShowPassword] = useState(false);
 
     const setAuthScreen = useSetRecoilState(authScreenAtom);
-	const setUser = useRecoilState(userAtom);
+	const setUser = useSetRecoilState(userAtom);
 	const showToast = useShowToast();
 	const [loading, setLoading] = useState(false);
 
@@ -46,6 +46,8 @@ const LoginCart = () => {
 				},
 				body: JSON.stringify(inputs), 
 			})
+
+			const data = await res.json();
 
 			if (data.error) {
 				showToast("Error", data.error, "error");
@@ -110,7 +112,7 @@ const LoginCart = () => {
 						</FormControl>
 						<Stack spacing={10} pt={2}>
 							<Button
-								loadingText='Submitting'
+								loadingText='Loggin in'
 								size='lg'
 								bg={useColorModeValue("gray.600", "gray.700")}
 								color={"white"}
