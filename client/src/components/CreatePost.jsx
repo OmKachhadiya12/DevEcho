@@ -56,7 +56,7 @@ const CreatePost = () => {
     const handleCreatePost = async () => {
         setLoading(true);
 		try {
-			const res = await fetch("/api/posts/create", {
+			const res = await fetch("/api/post/create", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -74,7 +74,7 @@ const CreatePost = () => {
 			setPostText("");
 			setImgUrl("");
 		} catch (error) {
-			showToast("Error", error, "error");
+			showToast("Error", error.message, "error");
 		} finally {
 			setLoading(false);
 		}

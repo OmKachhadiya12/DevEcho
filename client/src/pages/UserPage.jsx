@@ -9,7 +9,7 @@ import { Flex, Spinner } from "@chakra-ui/react";
 
 const UserPage = () => {
 
-  const [user,setuser] = useState(null);
+  const [user,setUser] = useState(null);
   const {username} = useParams();
   const showToast = useShowToast();
   const [loading, setLoading] = useState(true);
@@ -17,7 +17,7 @@ const UserPage = () => {
   useEffect(()=> {
     const getUser = async () => {
       try {
-        const res = await fetch(`api/user/profile/&{username}`);
+        const res = await fetch(`api/user/profile/${username}`);
         const data = await res.json();
         if (data.error) {
 					showToast("Error", data.error, "error");
@@ -26,7 +26,7 @@ const UserPage = () => {
 				setUser(data);
         
       } catch (error) {
-        showToast("Error", error, "error");
+        showToast("Error", error.message, "error");
       } finally {
 				setLoading(false);
 			}
