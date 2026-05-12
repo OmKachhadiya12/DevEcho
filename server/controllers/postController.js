@@ -37,7 +37,7 @@ const createPost = async (req,res) => {
 
         await newPost.save();
 
-        res.status(201).json({message: "Post created successfully.",newPost});
+        res.status(201).json(newPost);
         
     } catch (error) {
 
@@ -151,11 +151,13 @@ const replyToPost = async (req,res) => {
             return res.status(404).json({error: "Post not found."});
         }
 
-        post.replies.push({userId,username,profilePic,text});
+        const reply = {userId,username,profilePic,text};
+
+        post.replies.push(reply);
 
         await post.save();
 
-        res.status(200).json({message: "Replied successfully.",post});
+        res.status(200).json(reply);
         
         
     } catch (error) {

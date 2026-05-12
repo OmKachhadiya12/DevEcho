@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import getJWTtokenandSetCookie from "../utils/helper/getJWTtokenandSetCookie.js";
 import {v2 as cloudinary} from "cloudinary";
 import mongoose from "mongoose";
+import Post from "../model/postModel.js";
 
 const signupUser = async (req,res) => {
     try {
@@ -189,6 +190,17 @@ const updateprofile = async (req,res) => {
 		user.bio = bio || user.bio;
 
         user = await user.save();
+
+        await Post.updateMany(
+            {"replies.userId": userId},
+            {
+                $set: {
+                    "replies.$[reply].username": user.username,
+                    "replies.$[reply].user.profilePic": user.profilePic
+                }
+            },
+            {arrayFilters: [{"reply.userId": userId}]}
+        )
 
         user.password = null;
 
