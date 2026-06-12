@@ -75,7 +75,7 @@ const getMessage = async (req,res) => {
 
         const message = await Message.find({
             conversationId: conversation._id
-        }).sort({createdAt: -1});
+        }).sort({createdAt: 1});
 
         res.status(200).json(message);
         
@@ -86,4 +86,26 @@ const getMessage = async (req,res) => {
     }
 }
 
-export {sendMessage,getMessage};
+const getConversation = async (req,res) => {
+
+    try {
+
+        const {_id: userId} = req.user;
+
+        const conversation = await Conversation.find({
+            participants: userId
+        }).populate({
+            path: "participants",
+            select: "username profilePic"
+        })
+
+        res.status(200).json(conversation);
+        
+    } catch (error) {
+        
+        res.status(500).json({error: "error.message"});
+
+    }
+}
+
+export {sendMessage,getMessage,getConversation};
