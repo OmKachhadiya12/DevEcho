@@ -4,6 +4,7 @@ import { connectDB } from "./config/db.js";
 import cookieParser from "cookie-parser";
 import userRoutes from "./routes/userRoutes.js";
 import postRoutes from "./routes/postRoutes.js";
+import messageRoutes from "./routes/messageRoutes.js";
 import {v2 as cloudinary} from "cloudinary";
 
 dotenv.config();
@@ -26,6 +27,7 @@ app.use(express.urlencoded({extended: true}));
 
 app.use("/api/user",userRoutes);
 app.use("/api/post",postRoutes);
+app.use("/api/messages",messageRoutes);
 
 app.listen(PORT,() => {
     console.log (`Server is listening on ${PORT}`);
