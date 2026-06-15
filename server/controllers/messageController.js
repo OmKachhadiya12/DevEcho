@@ -92,18 +92,24 @@ const getConversation = async (req,res) => {
 
         const {_id: userId} = req.user;
 
-        const conversation = await Conversation.find({
+        const conversations = await Conversation.find({
             participants: userId
         }).populate({
             path: "participants",
             select: "username profilePic"
         })
 
-        res.status(200).json(conversation);
+        conversations.forEach((conversation) => {
+            conversation.participants = conversation.participants.filter((participant) => 
+                participant._id.toString() != userId._id.toString()
+            )
+        })
+
+        res.status(200).json(conversations);
         
     } catch (error) {
         
-        res.status(500).json({error: "error.message"});
+        res.status(500).json({error: error.message});
 
     }
 }
