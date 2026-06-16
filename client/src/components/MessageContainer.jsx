@@ -1,11 +1,12 @@
-import React, { useState,useEffect } from 'react'
+import React, { useState,useEffect, useRef } from 'react'
 import { Avatar, Divider, Flex, Image, Skeleton, SkeletonCircle, Text, useColorModeValue } from "@chakra-ui/react";
 import Message from "./Message.jsx";
 import MessageInput from "./MessageInput.jsx";
 import useShowToast from '../hooks/useShowToast.js';
-import { useRecoilState,useRecoilValue } from 'recoil';
-import { selectedConversationAtom } from '../atoms/messageAtom.js';
+import { useRecoilState,useRecoilValue, useSetRecoilState } from 'recoil';
+import { conversationsAtom, selectedConversationAtom } from '../atoms/messageAtom.js';
 import userAtom from '../atoms/userAtom.js';
+import { useSocket } from '../context/SocketContext.jsx';
 
 const MessageContainer = () => {
 
@@ -14,6 +15,39 @@ const MessageContainer = () => {
 	const [loadingMessages, setLoadingMessages] = useState(true);
 	const [messages, setMessages] = useState([]);
 	const currentUser = useRecoilValue(userAtom);
+	const setConversations = useSetRecoilState(conversationsAtom);
+	const {socket} = useSocket();
+	const messageEndRef = useRef(null);
+
+	useEffect(() => {
+		socket.on("newMessage", (message) => {
+			if (selectedConversation._id === message.conversationId) {
+				setMessages((prev) => [...prev, message]);
+			}
+
+			setConversations((prev) => {
+				const updatedConversations = prev.map((conversation) => {
+					if (conversation._id === message.conversationId) {
+						return {
+							...conversation,
+							lastMessage: {
+								text: message.text,
+								sender: message.sender,
+							},
+						};
+					}
+					return conversation;
+				});
+				return updatedConversations;
+			});
+		});
+
+		return () => socket.off("newMessage");
+	}, [socket]);
+
+	useEffect(() => {
+		messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+	}, [messages]);
 
 	useEffect(() => {
 		const getMessages = async () => {

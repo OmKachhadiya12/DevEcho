@@ -7,7 +7,7 @@ const usePreviewImage = () => {
     const [imgUrl,setImg ] = useState(null);
     const showToast = useShowToast();
 
-    const handleImageChange = () => {
+    const handleImageChange = (e) => {
         const file = e.target.files[0];
         if(file && file.type.startsWith("image/")) {
             const reader = new FileReader();
