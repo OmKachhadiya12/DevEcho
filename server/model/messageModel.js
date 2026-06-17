@@ -12,7 +12,11 @@ const messageSchema = new mongoose.Schema({
     },
     text: {
         type: String
-    }
+    },
+     default: false
+    } seen: {
+        type: Boolean,
+      
 
 },{timestamps: true}); 
 
