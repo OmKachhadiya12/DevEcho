@@ -1,5 +1,5 @@
 import express from "express";
-import { followUnfollowUser, getUserProfile, login, logout, signupUser, updateprofile } from "../controllers/userController.js";
+import { followUnfollowUser, getUserProfile, login, logout, signupUser, updateprofile ,getSuggestedUsers } from "../controllers/userController.js";
 import protectRoute from "../middleware/protectRoute.js";
 
 const router = express.Router();
@@ -7,6 +7,7 @@ const router = express.Router();
 router.get("/profile/:query",getUserProfile);
 
 router.post("/signup",signupUser);
+router.post("/suggested",protectRoute,getSuggestedUsers);
 router.post("/login",login);
 router.post("/logout",logout);
 router.post("/follow/:id",protectRoute,followUnfollowUser);
