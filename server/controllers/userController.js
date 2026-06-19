@@ -77,6 +77,11 @@ const login = async (req,res) => {
             return res.status(400).json({error: "Username or Password is Incorrect."});
         }
 
+        if (user.isFrozen) {
+			user.isFrozen = false;
+			await user.save();
+		}
+
         getJWTtokenandSetCookie(user._id,res);
 
         res.status(200).json({
@@ -277,4 +282,25 @@ const getSuggestedUsers =  async (req,res) => {
     }
 }
 
-export { signupUser, login, logout, followUnfollowUser, updateprofile, getUserProfile , getSuggestedUsers };
+const freezeAccount = async (req,res) => {
+    try {
+
+        const user = await User.findById(req.user._id);
+
+        if(!user) {
+            return res.status(404).json({error: "User not found."});
+        }
+
+        user.isFrozen = true;
+        await user.save();
+
+        res.status(200).json({success: true});
+        
+    } catch (error) {
+
+        res.status(500).json({error: "Internal server error."});
+        
+    }
+}
+
+export { signupUser, login, logout, followUnfollowUser, updateprofile, getUserProfile , getSuggestedUsers , freezeAccount };
