@@ -4,7 +4,7 @@ import useShowToast from './useShowToast';
 
 const usePreviewImage = () => {
 
-    const [imgUrl,setImg ] = useState(null);
+    const [imgUrl,setImgUrl ] = useState(null);
     const showToast = useShowToast();
 
     const handleImageChange = (e) => {
@@ -13,16 +13,16 @@ const usePreviewImage = () => {
             const reader = new FileReader();
 
             reader.onloadend = () => {
-                setImg(reader.result);
+                setImgUrl(reader.result);
             }
             reader.readAsDataURL(file);
         } else {
             showToast("Invalid file type.","Please select the valid image.","error");
-            setImg(null);
+            setImgUrl(null);
         }
     }
 
-  return{handleImageChange,imgUrl,setImg};
+  return{handleImageChange,imgUrl,setImgUrl};
 }
 
 export default usePreviewImage;

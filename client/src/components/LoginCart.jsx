@@ -26,7 +26,7 @@ const LoginCart = () => {
 	const [showPassword, setShowPassword] = useState(false);
 
     const setAuthScreen = useSetRecoilState(authScreenAtom);
-	const setUser = useSetRecoilState(userAtom);
+	const [user, setUser] = useRecoilState(userAtom);
 	const showToast = useShowToast();
 	const [loading, setLoading] = useState(false);
 
@@ -53,7 +53,6 @@ const LoginCart = () => {
 				showToast("Error", data.error, "error");
 				return;
 			}
-			console.log(data);
 			localStorage.setItem("user-threads", JSON.stringify(data));
 			setUser(data);
 			

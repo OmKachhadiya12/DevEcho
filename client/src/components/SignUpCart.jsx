@@ -35,7 +35,7 @@ const SignUpCart = () => {
     });
 
 	const showToast = useShowToast();
-	const setUser = useRecoilState(userAtom);
+	const [user, setUser] = useRecoilState(userAtom);
 
     const handleSignup = async () => {
         try {

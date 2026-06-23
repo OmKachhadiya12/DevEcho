@@ -53,7 +53,6 @@ const ChatPage = () => {
 					return;
 				}
 
-				console.log(data)
 				setConversations(data)
 				
 			} catch (error) {
@@ -75,7 +74,7 @@ const ChatPage = () => {
 
 		try {
 
-			const res = await fetch(`/api/users/profile/${searchText}`);
+			const res = await fetch(`/api/user/profile/${searchText}`);
 			const searchedUser = await res.json();
 			if (searchedUser.error) {
 				showToast("Error", searchedUser.error, "error");

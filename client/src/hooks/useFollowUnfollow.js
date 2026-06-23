@@ -18,7 +18,7 @@ const useFollowUnfollow = (user) => {
 
 		setUpdating(true);
 		try {
-			const res = await fetch(`/api/users/follow/${user._id}`, {
+			const res = await fetch(`/api/user/follow/${user._id}`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -39,7 +39,6 @@ const useFollowUnfollow = (user) => {
 			}
 			setFollowing(!following);
 
-			console.log(data);
 		} catch (error) {
 			showToast("Error", error, "error");
 		} finally {

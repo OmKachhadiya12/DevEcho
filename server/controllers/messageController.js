@@ -7,7 +7,7 @@ const sendMessage = async (req,res) => {
     try {
 
        const {recipientId,message} = req.body;
-       let img = req.body;
+       let {img} = req.body;
        const senderId = req.user._id;
        
        let conversation = await Conversation.findOne({
@@ -62,7 +62,7 @@ const sendMessage = async (req,res) => {
         
     } catch (error) {
 
-        res.status(500).json({error: "error.message"});
+        res.status(500).json({error: error.message});
         
     }
 }
